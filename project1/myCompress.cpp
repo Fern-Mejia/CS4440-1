@@ -30,5 +30,39 @@ int main(int argc, char *argv[]){
         input.close();
     }
 
+    //Compress file 
+    int counter;
+    for(int i=0;i<buffer.length();i++){
+        if (buffer[i]==buffer[i+1]) {
+            counter++;       
+        }
+        else
+        {
+            if (counter<16) {
+            for(int j = 0 ; j < counter; j++)
+                {
+                    cout<<buffer[i];
+                    output<<buffer[i];
+                }
+            counter=1;
+                
+            }
+            else
+            {   
+                if (buffer[i]=='0') {
+                    cout<<"-"<<counter<<"-";
+                    output<<"-"<<counter<<"-";
+                }
+                else
+                {
+                    cout<<"+"<<counter<<"+";
+                    output<<"+"<<counter<<"+";
+                }
+            counter=1;
+            }       
+        }   
+    }
+
+    cout << " File has been compressed.";
     
 }
