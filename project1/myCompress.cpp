@@ -21,14 +21,14 @@ int main(int argc, char *argv[]){
 
     //Open desitination file
     output.open("destination.txt");
-
-    // Read data from txt file
-    string buffer;
+    // Read data from input file
+    string buffer; //Stores data temporarily
     while(input.is_open()){ // Checking if file is open - returns boolean
-
-        cout << "test";
-
+        //Reads file line by line and store inside buffer. 
+        getline(input, buffer);
         //Close file 
         input.close();
     }
+
+    
 }
