@@ -8,7 +8,7 @@ using namespace std;
 int main(int argc, char *argv[]){
 
     if (argc<3) {
-   cout<<"ERROR: Too few arguments. Usage: ./ForkCompress source destination\n"<<endl;
+   cout<<"ERROR: Too few arguments. Usage: ./ForkCompress <inputfilename> <outputfilename>\n"<<endl;
    return 1 ;
 }
     pid_t pid;

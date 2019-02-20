@@ -11,7 +11,7 @@ int main (int argc, char *argv[ ]){
 
 
 if (argc<3) {
-   cout<<"ERROR: Too few arguments. Usage: ./MyDecompress source destination\n"<<endl;
+   cout<<"ERROR: Too few arguments. Usage: ./MyDecompress <inputfilename> <outputfilename>\n"<<endl;
    return 1 ;
 }
 ifstream input;
@@ -22,15 +22,11 @@ output.open(argv[2]);
 
 cout<<"Starting Decompress"<<endl;
 
-string buffer;
-//reading the data from txt file
-while(input.is_open()){
+//Creating Buffer
+stringstream buff;
+buff<< input.rdbuf();
+string buffer(buff.str());
 
-    getline(input,buffer);
-    
- 
-    input.close();
-}
 
 //starting Decompress
 int counter=0;

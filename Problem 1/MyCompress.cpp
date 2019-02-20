@@ -1,6 +1,8 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <cctype>
+#include <sstream>
 
 using namespace std;
 
@@ -23,35 +25,35 @@ if(input == NULL) {
 output.open(argv[2]);
 
 //Create buffer for input data.
-string buffer;
 //reading the data from txt file
-while(input.is_open()){
 
-    getline(input,buffer);
-    
- 
-    input.close();
-}
+stringstream buff;
+buff<< input.rdbuf();
+string contents(buff.str());
+
 //starting Compress
-int counter;
-for(int i=0;i<buffer.length();i++){
-    if (buffer[i]==buffer[i+1]) {
+int counter=1;
+for(int i=0;i<contents.length();i++){
+    
+    if (contents[i]==contents[i+1]) {
         counter++;       
     }
+    
+    
     else
     {
         if (counter<16) {
          for(int j = 0 ; j < counter; j++)
             {
-                 cout<<buffer[i];
-                 output<<buffer[i];
+                 cout<<contents[i];
+                 output<<contents[i];
             }
            counter=1;
             
         }
         else
         {   
-            if (buffer[i]=='0') {
+            if (contents[i]=='0') {
                 cout<<"-"<<counter<<"-";
                 output<<"-"<<counter<<"-";
             }
@@ -64,10 +66,12 @@ for(int i=0;i<buffer.length();i++){
         }       
     }   
  }
+
+
+
 cout<<"\nThe file has been compressed."<<endl;
 
 return 0 ;
 
     
 }
-
