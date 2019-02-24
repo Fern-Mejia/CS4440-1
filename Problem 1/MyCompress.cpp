@@ -4,6 +4,11 @@
 #include <cctype>
 #include <sstream>
 
+//for the time part
+#include <chrono>
+#include <ctime>
+
+
 using namespace std;
 
 int main (int argc, char *argv[]){
@@ -13,6 +18,7 @@ if (argc<3) {
    cout<<"ERROR: Too few arguments. Usage: ./MyCompress source destination\n"<<endl;
    return 1 ;
 }
+auto start = chrono::system_clock::now();//get the start time 
 
 ifstream input;
 ofstream output;
@@ -69,7 +75,13 @@ for(int i=0;i<contents.length();i++){
 
 
 
-cout<<"\nThe file has been compressed."<<endl;
+cout<<"\nThe file has been compressed."<<"\n"<<endl;
+
+auto end = chrono::system_clock::now();//get the time when complete
+chrono::duration<double> run_time_in_sec = end-start;//calculate run time
+time_t end_time = chrono::system_clock::to_time_t(end);//get the end time
+cout << "Finish at " << ctime(&end_time)<<endl;//print end time
+cout << "Run  time: " << run_time_in_sec.count() << "s\n"<<endl;//print run time
 
 return 0 ;
 
