@@ -14,6 +14,7 @@ if (argc<3) {
    cout<<"ERROR: Too few arguments. Usage: ./MyDecompress <inputfilename> <outputfilename>\n"<<endl;
    return 1 ;
 }
+//open in/output files
 ifstream input;
 ofstream output;
 input.open(argv[1]);
@@ -31,8 +32,8 @@ string buffer(buff.str());
 //starting Decompress
 int counter=0;
 int element;
-int n;
-int k ;
+int n,k;
+ 
 string numbers;
 
 
@@ -46,6 +47,7 @@ for(int i=0;i<buffer.length();i++){
       
      
      element=stoi(numbers);
+
      for(n=0;n<element;n++)
      {
        cout<<"0";
@@ -64,7 +66,7 @@ for(int i=0;i<buffer.length();i++){
      } while (buffer[i]!='+');
      
      element=stoi(numbers);
-     for( k=0;k<element;k++)
+     for(k=0;k<element;k++)
      {
        cout<<"1";
        output<<"1";

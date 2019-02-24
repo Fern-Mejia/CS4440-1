@@ -3,6 +3,9 @@
 #include <fstream>
 #include <string>
 #include <unistd.h>
+//for the time part
+#include <chrono>
+#include <ctime>
 using namespace std;
 
 int main(int argc, char *argv[]){
@@ -11,6 +14,7 @@ int main(int argc, char *argv[]){
    cout<<"ERROR: Too few arguments. Usage: ./ForkCompress <inputfilename> <outputfilename>\n"<<endl;
    return 1 ;
 }
+    auto start = chrono::system_clock::now();//get the start time 
     pid_t pid;
     pid=fork();
     
@@ -39,7 +43,15 @@ int main(int argc, char *argv[]){
         
     }
 
-    return 0 ;
+
+auto end = chrono::system_clock::now();//get the time when complete
+chrono::duration<double> run_time_in_sec = end-start;//calculate run time
+time_t end_time = chrono::system_clock::to_time_t(end);//get the end time
+cout << "\nFinish at " << ctime(&end_time)<<endl;//print end time
+cout << "Run  time: " << run_time_in_sec.count() << "s\n"<<endl;//print run time
+
+
+return 0 ;
 
 }
  

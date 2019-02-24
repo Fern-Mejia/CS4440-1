@@ -2,19 +2,19 @@
  * PROGRAM NAME	:	ParFork.c
 
  * DESCRIPTION	:	Using Pipe to Compress.
- 
+
  * EXECUTION	:	./ParFork <Input File> <Output File>
  ******************************************************************************************************************/
-
-
 #include <unistd.h>
 #include <stdio.h>
 #include <iostream>
 #include <fstream>
 #include <string>
-
+#include <cctype>
+#include <sstream>
+#include <unistd.h>
+#include <sys/types.h>
 using namespace std;
-
 
 int main(int argc, char *argv[]){
 
@@ -23,119 +23,109 @@ int main(int argc, char *argv[]){
    return 1 ;
     }
 
-    int pipe (int Pipefd[2]);
-
-    pid_t pid;
-    pid=fork();
+   int pipefd[2];  //Create Pipe here.
     
-     string buffer_1;
+    pid_t pid;  //Create Fork here.
+    pid=fork();
+    int Rel;
 
+    char readbuffer[80];
+    char writebuffer[80];
+    string buffer;
+    
+    ifstream input;
+    ofstream output;
+    
+    input.open(argv[1]);
+    output.open(argv[2]);
+    
 
     if (pid<0) {
         cout<<"\nERROR, Fork Failed"<<endl;
     }
-    char buff;
+
     //Child Processs
-    if (pid==0){    
-            close(pipefd[1]);
-            int pidC=getppid();
-            cout<<"\nChildren Process";
-            cout<<"\nPid = "<< pidC<<endl;
-            
-            while (read(Pipefd[0],&buffer_1)>0){
-
-            };
-
-
-
-
+    else if (pid==0){
         
         
+        close(pipefd[0]);
+        
+        string s;
+        char ch;
+      read(pipefd[1],&ch,128);
+           
+        cout<<s;
+        output<<s;
+        cout<<ch;
+        output<<ch;
+        
+           
     }
     //Parent Process
     else {
-        int pidP = getppid() ;
-        cout<<"Parent Process"<<endl;
-         cout<<"Pid = "<< pidP<<endl;
-
-
-         close(pipefd[0]);
-
-    //begining Compress
-        void MyCompress(char *argv[]);
-
-    write(Pipefd[0], buffer_1,512);
-
-        wait(NULL);
-
-
-            
-    }
-    return 0 ;
-
-}
-
-
-
-
-
-
-
-
-
-void MyCompress(int argc, char *argv[]){
-
-    ifstream input;
-   // ofstream output;
-
-    string buffer;
-   
-
-    input.open(argv[1]);
-
-    while(input.is_open()){
-
-    getline(input,buffer);
+    stringstream buff;
+    buff<< input.rdbuf();
+    string contents(buff.str());
     
- 
-    input.close();
-}
 
-    //starting Compress
-int counter;
-for(int i=0;i<buffer.length();i++){
-    if (buffer[i]==buffer[i+1]) {
+//starting Compress
+int counter=1;
+for(int i=0;i<contents.length();i++){
+    
+    if (contents[i]==contents[i+1]) {
         counter++;       
     }
+    
+    
     else
     {
         if (counter<16) {
          for(int j = 0 ; j < counter; j++)
             {
-                 cout<<buffer[i];
-                 buffer_1.append("buffer[i]");
+                 cout<<contents[i];
+                 buffer += contents[i];
             }
            counter=1;
             
         }
         else
         {   
-            if (buffer[i]=='0') {
+            if (contents[i]=='0') {
                 cout<<"-"<<counter<<"-";
-                buffer_1.append("-","counter");
+                buffer.append("-");
+                buffer.append(to_string(counter));
+                buffer.append("-") ;
+                
             }
             else
             {
                 cout<<"+"<<counter<<"+";
-                buffer_1.append("counter");
+                buffer.append("+");
+                buffer.append(to_string(counter));
+                buffer.append("+") ;
             }
          counter=1;
         }       
     }   
  }
-cout<<"\nThe file has been compressed."<<endl;
-
+//compress complete
+   
 
     
+    //start pipe
+    close(pipefd[1]);
+    
+    write(pipefd[0],buffer.c_str(),buffer.length()+1);
+
+    wait(NULL);
+    //waitpid(pid,NULL,0);
+  
+       
+    }
+
+    
+    return 0 ;
 
 }
+
+
