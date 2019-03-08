@@ -1,76 +1,49 @@
-/*****************************************************************************************************************
- * PROGRAM NAME	:	ParFork.c
-
- * DESCRIPTION	:	Using Pipe to Compress.
-
- * EXECUTION	:	./ParFork <Input File> <Output File>
- ******************************************************************************************************************/
 #include <unistd.h>
 #include <stdio.h>
 #include <iostream>
 #include <fstream>
 #include <string>
-#include <cctype>
 #include <sstream>
-#include <unistd.h>
 #include <sys/types.h>
+#include <sys/wait.h>
+#include <stdlib.h>
+
 using namespace std;
 
-int main(int argc, char *argv[]){
+	int main(int argc, char *argv[])
+	{
+         if (argc != 3)
+         {
+         cout<<"ERROR: Need to have three arguments . Usage: ./PipeCompress <inputfilename> <outputfilename>\n"<<endl;
+         return 1 ;
+         }
+        
+		int pid, pip[2];
+		char instring[100];        
+        ifstream input;
+        ofstream output;
+        string buffer;
 
-    if (argc != 3) {
-   cout<<"ERROR: Need to have three arguments . Usage: ./PipeCompress <inputfilename> <outputfilename>\n"<<endl;
-   return 1 ;
-    }
+		pipe(pip); 
 
-   int pipefd[2];  //Create Pipe here.
-    
-    pid_t pid;  //Create Fork here.
-    pid=fork();
-    int Rel;
-
-    char readbuffer[80];
-    char writebuffer[80];
-    string buffer;
-    
-    ifstream input;
-    ofstream output;
-    
+		pid = fork();
+        if (pid<0) {
+            cout<<"fork error!"<<endl;
+            return 1;
+        }
+        
+		if (pid == 0)           
+		{
+	
     input.open(argv[1]);
-    output.open(argv[2]);
-    
-
-    if (pid<0) {
-        cout<<"\nERROR, Fork Failed"<<endl;
-    }
-
-    //Child Processs
-    else if (pid==0){
-        
-        
-        close(pipefd[0]);
-        
-        string s;
-        char ch;
-      read(pipefd[1],&ch,128);
-           
-        cout<<s;
-        output<<s;
-        cout<<ch;
-        output<<ch;
-        
-           
-    }
-    //Parent Process
-    else {
     stringstream buff;
     buff<< input.rdbuf();
     string contents(buff.str());
     
 
-//starting Compress
-int counter=1;
-for(int i=0;i<contents.length();i++){
+    //starting Compress
+    int counter=1;
+    for(int i=0;i<contents.length();i++){
     
     if (contents[i]==contents[i+1]) {
         counter++;       
@@ -82,7 +55,7 @@ for(int i=0;i<contents.length();i++){
         if (counter<16) {
          for(int j = 0 ; j < counter; j++)
             {
-                 cout<<contents[i];
+                 //cout<<contents[i];
                  buffer += contents[i];
             }
            counter=1;
@@ -91,7 +64,7 @@ for(int i=0;i<contents.length();i++){
         else
         {   
             if (contents[i]=='0') {
-                cout<<"-"<<counter<<"-";
+                //cout<<"-"<<counter<<"-";
                 buffer.append("-");
                 buffer.append(to_string(counter));
                 buffer.append("-") ;
@@ -99,7 +72,7 @@ for(int i=0;i<contents.length();i++){
             }
             else
             {
-                cout<<"+"<<counter<<"+";
+               // cout<<"+"<<counter<<"+";
                 buffer.append("+");
                 buffer.append(to_string(counter));
                 buffer.append("+") ;
@@ -107,25 +80,37 @@ for(int i=0;i<contents.length();i++){
          counter=1;
         }       
     }   
- }
-//compress complete
-   
+     }      
+        //write-end for the pipe
+        int buffer_length = buffer.length(); //this is how length of your data.
+        close(pip[0]);
+		write(pip[1], buffer.c_str(), buffer_length);  //write through the pipe 
+        close(pip[1]);
+	}
+		
+        
+        
+        else			/* parent : receives message from child */
+		{
+             output.open(argv[2]);
+			/* read from the pipe */
+            close(pip[1]);
+			
+           int n;
+           while( (n = read(pip[0], instring, 1))>0){//Iterator all numbers in pipe 
+               for(int i = 0; i < n; i++)
+               {
+                  
+                   output<<instring[i];//write the result to the output file
+               }
+               
+           }
 
-    
-    //start pipe
-    close(pipefd[1]);
-    
-    write(pipefd[0],buffer.c_str(),buffer.length()+1);
-
-    wait(NULL);
-    //waitpid(pid,NULL,0);
-  
-       
+            close(pip[0]);      
+            wait(NULL);
+            
+             
+             
+		}    
+        return EXIT_SUCCESS ; 
     }
-
-    
-    return 0 ;
-
-}
-
-

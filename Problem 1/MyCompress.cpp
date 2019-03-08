@@ -51,7 +51,7 @@ for(int i=0;i<contents.length();i++){
         if (counter<16) {
          for(int j = 0 ; j < counter; j++)
             {
-                 cout<<contents[i];
+                
                  output<<contents[i];
             }
            counter=1;
@@ -60,12 +60,12 @@ for(int i=0;i<contents.length();i++){
         else
         {   
             if (contents[i]=='0') {
-                cout<<"-"<<counter<<"-";
+                
                 output<<"-"<<counter<<"-";
             }
             else
             {
-                cout<<"+"<<counter<<"+";
+                
                 output<<"+"<<counter<<"+";
             }
          counter=1;
@@ -73,14 +73,15 @@ for(int i=0;i<contents.length();i++){
     }   
  }
 
-
+input.close();
+output.close();
 
 cout<<"\nThe file has been compressed."<<"\n"<<endl;
 
 auto end = chrono::system_clock::now();//get the time when complete
 chrono::duration<double> run_time_in_sec = end-start;//calculate run time
 time_t end_time = chrono::system_clock::to_time_t(end);//get the end time
-cout << "Finish at " << ctime(&end_time)<<endl;//print end time
+//cout << "Finish at " << ctime(&end_time)<<endl;//print end time
 cout << "Run  time: " << run_time_in_sec.count() << "s\n"<<endl;//print run time
 
 return 0 ;

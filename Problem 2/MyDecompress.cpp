@@ -28,9 +28,10 @@ stringstream buff;
 buff<< input.rdbuf();
 string buffer(buff.str());
 
+cout<<buffer;
 
 //starting Decompress
-int counter=0;
+int counter;
 int element;
 int n,k;
  
